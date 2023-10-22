@@ -3,6 +3,7 @@ package com.bobinho.server;
 import com.bobinho.common.interfaces.GameManagerService;
 import com.bobinho.common.interfaces.PlayerService;
 import com.bobinho.common.interfaces.RoomService;
+import io.vavr.control.Try;
 import lombok.extern.slf4j.Slf4j;
 
 import java.rmi.RemoteException;
@@ -23,9 +24,10 @@ public class GameManager extends UnicastRemoteObject implements GameManagerServi
     }
 
     @Override
-    public Collection<RoomService> getAllRoom() throws RemoteException {
+    public Collection<RoomService> getAllAvailableRoom() throws RemoteException {
         return rooms.values().stream()
                 .map(room -> (RoomService) room)
+                .filter(room -> Try.of(room::isNotFull).get())
                 .toList();
     }
 
@@ -69,11 +71,11 @@ public class GameManager extends UnicastRemoteObject implements GameManagerServi
 
             rooms.get(room.getId()).removePlayer(player);
 
+            rooms.get(room.getId()).notifyAll();
+
             if (rooms.get(room.getId()).isEmpty()) {
                 rooms.remove(rooms.get(room.getId()).getId());
             }
-
-            rooms.get(room.getId()).notifyAll();
         }
     }
 

@@ -6,7 +6,7 @@ import java.util.Collection;
 
 public interface GameManagerService extends Remote {
 
-	Collection<RoomService> getAllRoom() throws RemoteException;
+	Collection<RoomService> getAllAvailableRoom() throws RemoteException;
 
 	RoomService createRoom(String name, PlayerService player) throws RemoteException, InterruptedException;
 

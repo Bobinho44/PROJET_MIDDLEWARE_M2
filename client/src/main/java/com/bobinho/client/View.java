@@ -1,8 +1,10 @@
 package com.bobinho.client;
 
 import com.bobinho.common.interfaces.EColor;
+import com.bobinho.common.interfaces.PlayerService;
 import com.bobinho.common.interfaces.RoomService;
 import com.bobinho.common.utils.ConfigUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
@@ -25,9 +27,11 @@ import java.awt.Robot;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class View extends JFrame implements MouseListener {
 
 	public static Point GAMEBOARD_TOP_LEFT_CORNER;
@@ -54,10 +58,6 @@ public class View extends JFrame implements MouseListener {
 
 	public void refreshAvailableRoom(Map<String, RoomService> availableRooms) {
 		this.availableRooms = availableRooms;
-	}
-
-	public void getAvailableRoom() {
-		this.controller.getAvailableRoom();
 	}
 
 	private void build() {
@@ -108,6 +108,10 @@ public class View extends JFrame implements MouseListener {
 			this.controller.getAvailableRoom();
 			popupMenu.removeAll();
 
+			if (this.availableRooms.size() == 0) {
+				JOptionPane.showMessageDialog(this, "No rooms available!", "Error", JOptionPane.ERROR_MESSAGE);
+			}
+
 			for (Map.Entry<String, RoomService> room : this.availableRooms.entrySet()) {
 				JRadioButtonMenuItem ruleButton = new JRadioButtonMenuItem(room.getKey());
 				ruleButton.addActionListener(e -> {
@@ -124,11 +128,6 @@ public class View extends JFrame implements MouseListener {
 
 		menuBar.add(menuRules);
 
-		//Creates the Quit button.
-		JMenuItem quit = new JMenuItem("Quit");
-		quit.addActionListener(e -> System.exit(EXIT_ON_CLOSE));
-		menuBar.add(quit);
-
 		GAMEBOARD_SIZE = (int) (getWidth() / 2.4);
 		GAMEBOARD_TOP_LEFT_CORNER = new Point(getWidth() / 2 - GAMEBOARD_SIZE / 2, getHeight() / 2 - GAMEBOARD_SIZE / 2);
 		SQUARE_SIZE = (((View.GAMEBOARD_SIZE - 1) / ConfigUtils.BOARD_LENGTH)) - 1;
@@ -140,7 +139,7 @@ public class View extends JFrame implements MouseListener {
 		scorePanel = new JPanel(new GridLayout(0, 1));
 		add(scorePanel, BorderLayout.WEST);
 		scorePanel.add(createJTextField(""));
-		scorePanel.add(createJTextField("Create or join a room..."));
+		scorePanel.add(createJTextField("      Create or join a room...      "));
 		this.panneau.add(createJTextField(""));
 		this.panneau.add(createJTextField(""));
 		this.panneau.add(createJTextField(""));
@@ -161,8 +160,35 @@ public class View extends JFrame implements MouseListener {
 		return (AbstractButton) ((JMenuBar) this.drawingPanel.getComponents()[0]).getComponents()[i - 1];
 	}
 
-	private JTextField getPlayerScore(int playerNumber) {
-		return (JTextField) this.panneau.getComponents()[2 * playerNumber + 1];
+	public void finishGame(PlayerService player) throws RemoteException {
+
+		int player1 = Integer.parseInt(((JTextField) this.panneau.getComponents()[1]).getText());
+		int player2 = Integer.parseInt(((JTextField) this.panneau.getComponents()[3]).getText());
+		boolean isPlayer1 = this.players.get(0).equals(player.getName());
+		log.info(this.players.get(0) + " " + isPlayer1 + " " + player1 + " " + player2);
+
+		if (player1 == player2) {
+			JOptionPane.showMessageDialog(this, "Equality!", "Result", JOptionPane.INFORMATION_MESSAGE);
+		}
+
+		else if ((player1 > player2 && isPlayer1) || (player1 < player2 && !isPlayer1)) {
+			JOptionPane.showMessageDialog(this, "You have won!", "Result", JOptionPane.INFORMATION_MESSAGE);
+		}
+
+		else {
+			JOptionPane.showMessageDialog(this, "You have lost!", "Result", JOptionPane.INFORMATION_MESSAGE);
+		}
+
+		this.getMenuItem(1).setEnabled(true);
+		this.getMenuItem(2).setEnabled(true);
+
+		((JTextField) this.scorePanel.getComponents()[1]).setText("      Create or join a room...      ");
+		((JTextField) this.panneau.getComponents()[0]).setText(" ");
+		((JTextField) this.panneau.getComponents()[1]).setText(" ");
+		((JTextField) this.panneau.getComponents()[2]).setText(" ");
+		((JTextField) this.panneau.getComponents()[3]).setText(" ");
+
+		this.drawingPanel.repaint(new ArrayList<>());
 	}
 
 	public void start(List<String> players) {
@@ -172,13 +198,10 @@ public class View extends JFrame implements MouseListener {
 		((JTextField) this.panneau.getComponents()[3]).setText("0");
 
 		this.players = players;
-		for (int i = 1; i < 4; i++) {
+
+		for (int i = 1; i < 3; i++) {
 			getMenuItem(i).setEnabled(false);
 		}
-	}
-
-	public void canStart(boolean canStart) {
-		getMenuItem(2).setEnabled(canStart);
 	}
 
 	public void update(boolean isYourTurn, List<Square> board) {
@@ -198,7 +221,7 @@ public class View extends JFrame implements MouseListener {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void mouseClicked(MouseEvent e) {}
 

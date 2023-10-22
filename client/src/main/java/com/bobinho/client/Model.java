@@ -72,20 +72,26 @@ public class Model {
                 while (true) {
 
                     if (!waitPlay && this.game.isFinished()) {
-                        log.error("END");
+                        this.finishGame();
                         break;
                     }
 
                     if (!waitPlay) {
 
                         this.updateView(false);
+
+                        if (this.game.isFinished()) {
+                            this.finishGame();
+                            break;
+                        }
+
                         log.info("Waiting for your turn...");
                         this.game.awaitPlayerTurn(this.player);
 
                         this.updateView(true);
 
                         if (this.game.isFinished()) {
-                            log.error("END");
+                            this.finishGame();
                             break;
                         }
 
@@ -128,13 +134,35 @@ public class Model {
     }
 
     public void refreshAvailableRoom() throws RemoteException {
-        this.view.refreshAvailableRoom(this.gameManager.getAllRoom().stream()
-                .collect(Collectors.toMap(map -> Try.of(map::getName).get(), map -> map)));
+        this.view.refreshAvailableRoom(this.gameManager.getAllAvailableRoom().stream().collect(Collectors.toMap(map -> Try.of(map::getName).get(), map -> map)));
+    }
+
+    private void finishGame() throws RemoteException {
+        this.gameManager.leaveRoom(this.room, this.player);
+
+        this.room = null;
+        this.game = null;
+        this.waitPlay = false;
+
+        SwingUtilities.invokeLater(() -> {
+            try {
+                this.view.finishGame(this.player);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        });
+
+        log.error("END");
     }
 
     private void updateView(boolean isYourTurn) {
         SwingUtilities.invokeLater(() -> {
             try {
+
+                if (this.game == null) {
+                    return;
+                }
+
                 this.view.update(
                         isYourTurn,
                         this.game.getBoard().getBoard().stream()
@@ -148,4 +176,5 @@ public class Model {
             }
         });
     }
+
 }
