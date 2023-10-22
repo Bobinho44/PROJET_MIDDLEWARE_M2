@@ -78,11 +78,11 @@ public class Model {
 
                     if (!waitPlay) {
 
-                        this.updateView();
+                        this.updateView(false);
                         log.info("Waiting for your turn...");
                         this.game.awaitPlayerTurn(this.player);
 
-                        this.updateView();
+                        this.updateView(true);
 
                         if (this.game.isFinished()) {
                             log.error("END");
@@ -112,7 +112,7 @@ public class Model {
                     log.info("You played in (" + i + " " + j + ")...");
                     this.game.play(i, j);
 
-                    this.updateView();
+                    this.updateView(false);
                     waitPlay = false;
                 }
 
@@ -132,11 +132,11 @@ public class Model {
                 .collect(Collectors.toMap(map -> Try.of(map::getName).get(), map -> map)));
     }
 
-    private void updateView() {
+    private void updateView(boolean isYourTurn) {
         SwingUtilities.invokeLater(() -> {
             try {
                 this.view.update(
-                        false,
+                        isYourTurn,
                         this.game.getBoard().getBoard().stream()
                                 .map(square -> Try.of(() -> new Square(square.getColor(), square.getCoordinates())).get())
 								.toList()
