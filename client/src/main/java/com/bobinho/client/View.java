@@ -139,7 +139,7 @@ public class View extends JFrame implements MouseListener {
 		scorePanel = new JPanel(new GridLayout(0, 1));
 		add(scorePanel, BorderLayout.WEST);
 		scorePanel.add(createJTextField(""));
-		scorePanel.add(createJTextField("      Create or join a room...      "));
+		scorePanel.add(createJTextField("           Create or join a room...           "));
 		this.panneau.add(createJTextField(""));
 		this.panneau.add(createJTextField(""));
 		this.panneau.add(createJTextField(""));
@@ -181,7 +181,7 @@ public class View extends JFrame implements MouseListener {
 		this.getMenuItem(1).setEnabled(true);
 		this.getMenuItem(2).setEnabled(true);
 
-		((JTextField) this.scorePanel.getComponents()[1]).setText("      Create or join a room...      ");
+		((JTextField) this.scorePanel.getComponents()[1]).setText("           Create or join a room...           ");
 		((JTextField) this.panneau.getComponents()[0]).setText(" ");
 		((JTextField) this.panneau.getComponents()[1]).setText(" ");
 		((JTextField) this.panneau.getComponents()[2]).setText(" ");
