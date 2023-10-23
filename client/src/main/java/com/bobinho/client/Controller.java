@@ -24,7 +24,7 @@ public class Controller {
             this.model.refreshAvailableRoom();
         }
 
-        catch (Exception e) {
+        catch (RemoteException e) {
             log.error("Unexpected available room exception!", e);
         }
     }
@@ -43,7 +43,7 @@ public class Controller {
             this.model.register(name);
         }
 
-        catch (Exception e) {
+        catch (RemoteException e) {
             log.error("Unexpected registration exception!", e);
 			return false;
         }

@@ -50,7 +50,7 @@ public class Game extends UnicastRemoteObject implements GameService {
 
     @Override
     public boolean isFinished() throws RemoteException {
-        return this.players.size() < 2 || this.board.getBoard().stream().anyMatch(square -> Try.of(square::getColor).getOrElse(EColor.WHITE) != EColor.WHITE);
+        return this.players.size() < 2 || this.board.getBoard().stream().allMatch(square -> Try.of(square::getColor).getOrElse(EColor.WHITE) != EColor.WHITE);
     }
 
     @Override

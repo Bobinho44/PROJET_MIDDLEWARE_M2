@@ -165,7 +165,6 @@ public class View extends JFrame implements MouseListener {
 		int player1 = Integer.parseInt(((JTextField) this.panneau.getComponents()[1]).getText());
 		int player2 = Integer.parseInt(((JTextField) this.panneau.getComponents()[3]).getText());
 		boolean isPlayer1 = this.players.get(0).equals(player.getName());
-		log.info(this.players.get(0) + " " + isPlayer1 + " " + player1 + " " + player2);
 
 		if (player1 == player2) {
 			JOptionPane.showMessageDialog(this, "Equality!", "Result", JOptionPane.INFORMATION_MESSAGE);
@@ -199,16 +198,15 @@ public class View extends JFrame implements MouseListener {
 
 		this.players = players;
 
-		for (int i = 1; i < 3; i++) {
-			getMenuItem(i).setEnabled(false);
-		}
+		this.getMenuItem(1).setEnabled(false);
+		this.getMenuItem(2).setEnabled(false);
 	}
 
-	public void update(boolean isYourTurn, List<Square> board) {
+	public void update(boolean isYourTurn, List<Drawer> board) {
 
 		((JTextField) scorePanel.getComponents()[1]).setText(isYourTurn ? "It's your turn!" : "Your opponent is playing...");
-		((JTextField) this.panneau.getComponents()[1]).setText(String.valueOf(board.stream().filter(square -> square.getColor() == EColor.RED).count()));
-		((JTextField) this.panneau.getComponents()[3]).setText(String.valueOf(board.stream().filter(square -> square.getColor() == EColor.BLUE).count()));
+		((JTextField) this.panneau.getComponents()[1]).setText(String.valueOf(board.stream().filter(drawer -> drawer.getColor() == EColor.RED).count()));
+		((JTextField) this.panneau.getComponents()[3]).setText(String.valueOf(board.stream().filter(drawer -> drawer.getColor() == EColor.BLUE).count()));
 
 		this.drawingPanel.repaint(board);
 	}
@@ -217,8 +215,10 @@ public class View extends JFrame implements MouseListener {
 	public void mousePressed(MouseEvent event) {
 		try {
 			controller.click(event.getPoint(), new Robot().getPixelColor(event.getLocationOnScreen().x, event.getLocationOnScreen().y));
-		} catch (AWTException | RemoteException e) {
-			e.printStackTrace();
+		}
+
+		catch (AWTException | RemoteException e) {
+			log.error("Unexpected click exception!", e);
 		}
 	}
 

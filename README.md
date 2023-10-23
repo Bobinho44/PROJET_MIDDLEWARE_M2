@@ -13,7 +13,7 @@
 
 ### Rules
 
-The goal of the game is to color as many squares as possible with your own color by clicking. Players take turns, and they can choose only one white square per turn. When a player colors a new square, all the adjacent squares that are already colored will change to the player's color.
+The goal of the game is to color as many squares as possible with your own color by clicking. Players take turns, and they can choose only one white drawer per turn. When a player colors a new drawer, all the adjacent squares that are already colored will change to the player's color.
 
 ### Limitation
 

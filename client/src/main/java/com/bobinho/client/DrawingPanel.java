@@ -12,7 +12,7 @@ import java.util.List;
 @Slf4j
 public class DrawingPanel extends JPanel {
 
-	private List<Square> board;
+	private List<Drawer> board;
 
 	public DrawingPanel() {
 		super();
@@ -21,7 +21,7 @@ public class DrawingPanel extends JPanel {
 		setBorder(BorderFactory.createLineBorder(Color.lightGray));
 	}
 
-	public void repaint(List<Square> board) {
+	public void repaint(List<Drawer> board) {
 		this.board = board;
 
 		super.repaint();

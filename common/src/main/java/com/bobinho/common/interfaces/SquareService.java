@@ -16,6 +16,4 @@ public interface SquareService extends Remote {
 
     int getY() throws RemoteException;
 
-    void draw(Graphics g, Point boardTopLeftCorner, int squareSize) throws RemoteException;
-
 }

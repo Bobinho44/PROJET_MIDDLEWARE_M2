@@ -145,14 +145,17 @@ public class Model {
         this.waitPlay = false;
 
         SwingUtilities.invokeLater(() -> {
+
             try {
                 this.view.finishGame(this.player);
-            } catch (RemoteException e) {
-                e.printStackTrace();
+            }
+
+            catch (RemoteException e) {
+                log.error("Unexpected end game exception!", e);
             }
         });
 
-        log.error("END");
+        log.info("End of the game...");
     }
 
     private void updateView(boolean isYourTurn) {
@@ -166,7 +169,7 @@ public class Model {
                 this.view.update(
                         isYourTurn,
                         this.game.getBoard().getBoard().stream()
-                                .map(square -> Try.of(() -> new Square(square.getColor(), square.getCoordinates())).get())
+                                .map(square -> Try.of(() -> new Drawer(square.getColor(), square.getCoordinates())).get())
 								.toList()
                 );
             }

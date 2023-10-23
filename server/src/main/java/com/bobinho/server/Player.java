@@ -1,15 +1,12 @@
 package com.bobinho.server;
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.UUID;
 
 import com.bobinho.common.interfaces.PlayerService;
-import lombok.EqualsAndHashCode;
 
-@EqualsAndHashCode(callSuper = false)
-public class Player extends UnicastRemoteObject implements PlayerService, Serializable {
+public class Player extends UnicastRemoteObject implements PlayerService {
 
 	private final UUID id;
 	private final String name;
@@ -21,12 +18,12 @@ public class Player extends UnicastRemoteObject implements PlayerService, Serial
 	}
 
 	@Override
-	public UUID getId() {
+	public UUID getId() throws RemoteException{
 		return this.id;
 	}
 
 	@Override
-	public String getName() {
+	public String getName() throws RemoteException {
 		return this.name;
 	}
 
